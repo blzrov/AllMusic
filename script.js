@@ -6,11 +6,13 @@ const options = {
   },
 };
 
-let input = document.querySelector("input");
+let input = document.querySelector(".input");
 let inputValue;
 let button = document.querySelector("button");
 let audio = document.querySelector(".audio");
-audio.volume = 0.25; //ползунок громкости сделать
+// let slider = document.querySelector(".slider");
+// audio.volume = slider.value / 100; //ползунок громкости сделать
+audio.volume = 0.25;
 let result = document.querySelector(".result");
 let trackItems = document.createElement("div");
 trackItems.classList.add("trackItems");
@@ -30,6 +32,10 @@ button.addEventListener("click", function () {
   clear();
   getApi("q=" + inputValue);
 });
+
+// slider.addEventListener("input", function (event) {
+//   audio.volume = slider.value / 100;
+// });
 
 function clear() {
   result.innerHTML = "Подождите...";
