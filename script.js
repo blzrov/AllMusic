@@ -5,121 +5,139 @@ const options = {
     "X-RapidAPI-Key": "ca03dc8b4amsh8fe919ef52202dbp1412f2jsn8b0561de19b7",
   },
 };
+
+let input = document.querySelector("input");
+let inputValue;
+let button = document.querySelector("button");
+let audio = document.querySelector(".audio");
+audio.volume = 0.25; //ползунок громкости сделать
+let result = document.querySelector(".result");
+let trackItems = document.createElement("div");
+trackItems.classList.add("trackItems");
+let artistItems = document.createElement("div");
+artistItems.classList.add("artistItems");
+let artists = [];
+
+input.addEventListener("keydown", function (event) {
+  if (event.key == "Enter" && input.value !== "") {
+    clear();
+    getApi("q=" + inputValue);
+  }
+});
+
+button.addEventListener("click", function () {
+  if (!input.value) return;
+  clear();
+  getApi("q=" + inputValue);
+});
+
+function clear() {
+  result.innerHTML = "Подождите...";
+  inputValue = input.value;
+  trackItems.innerHTML = "";
+  artistItems.innerHTML = "";
+  artists = [];
+}
+
 function getApi(q) {
   fetch("https://deezerdevs-deezer.p.rapidapi.com/search?" + q, options)
     .then((response) => response.json())
-    .then((response) => displayData(response))
+    .then((response) => handleData(response))
     .catch(() => getApi(q));
 }
 
-function displayData(data) {
-  console.log(data);
+function handleData(data) {
   if (data) {
     createItems(data.data);
   }
   if (data.next) {
     getApi(data.next.split("?")[1]);
   } else if (true) {
-    items.innerHTML = "";
+    result.innerHTML = "";
     audio.src = "";
-    items.appendChild(track_items);
-    items.appendChild(artist_items);
+    result.appendChild(trackItems);
+    result.appendChild(artistItems);
+    fixHeight();
   }
 }
+
 function createItems(datas) {
   for (let i = 0; i < datas.length; i++) {
     let item = createItem(datas[i].album.cover_medium);
+
     let name = document.createElement("div");
-    let title = document.createElement("div");
     name.textContent = datas[i].artist.name;
+
+    let title = document.createElement("div");
+    title.textContent = datas[i].title;
+
     name.addEventListener("mouseenter", function () {
-      name.style.color = "rgb(43, 115, 209)";
+      this.style.color = "rgb(43, 115, 209)";
     });
     name.addEventListener("mouseleave", function () {
-      name.style.color = "white";
+      this.style.color = "white";
     });
+
     name.addEventListener("click", function () {
-      input_value = datas[i].artist.name;
-      input.value = input_value;
-      items.innerHTML = "Подождите...";
-      track_items.innerHTML = "";
-      artist_items.innerHTML = "";
-      list_artists = [];
+      inputValue = datas[i].artist.name;
+      input.value = inputValue;
+      clear();
       getApi("q=" + datas[i].artist.name);
     });
-    title.textContent = datas[i].title;
     item.appendChild(name);
     item.appendChild(title);
+
     item.addEventListener("mouseenter", function () {
       audio.src = datas[i].preview;
     });
     item.addEventListener("mouseleave", function () {
       audio.src = "";
     });
-    track_items.appendChild(item);
-
-    if (!list_artists.includes(datas[i].artist.id)) {
-      list_artists.push(datas[i].artist.id);
-      let artist_item = createItem(datas[i].artist.picture_medium);
-      let name = document.createElement("div");
-      let title = document.createElement("span");
-      title.textContent = datas[i].artist.name;
-      name.appendChild(title);
-      artist_item.appendChild(name);
-      artist_item.addEventListener("mouseenter", function () {
-        name.style.backgroundColor = "rgb(0, 0, 0, 60%)";
-        title.style.display = "inline";
-        artist_item.style.borderColor = "red";
+    trackItems.appendChild(item);
+    //
+    if (!artists.includes(datas[i].artist.id)) {
+      artists.push(datas[i].artist.id);
+      let artist = createItem(datas[i].artist.picture_medium);
+      let background = document.createElement("div");
+      let nameArtist = document.createElement("span");
+      nameArtist.textContent = datas[i].artist.name;
+      background.appendChild(nameArtist);
+      artist.appendChild(background);
+      artist.addEventListener("mouseenter", function () {
+        background.style.backgroundColor = "rgb(0, 0, 0, 60%)";
+        nameArtist.style.display = "inline";
+        this.style.borderColor = "red";
         audio.src = datas[i].preview;
         input.value = datas[i].artist.name + " " + datas[i].title;
       });
-      artist_item.addEventListener("mouseleave", function () {
-        title.style.display = "none";
-        name.style.backgroundColor = "rgb(0, 0, 0, 0%)";
-        artist_item.style.borderColor = "gray";
+      artist.addEventListener("mouseleave", function () {
+        nameArtist.style.display = "none";
+        background.style.backgroundColor = "rgb(0, 0, 0, 0%)";
+        this.style.borderColor = "gray";
         audio.src = "";
-        input.value = input_value;
+        input.value = inputValue;
       });
-      artist_item.addEventListener("click", function () {
-        input_value = datas[i].artist.name;
-        input.value = input_value;
-        items.innerHTML = "Подождите...";
-        track_items.innerHTML = "";
-        artist_items.innerHTML = "";
-        list_artists = [];
+      artist.addEventListener("click", function () {
+        inputValue = datas[i].artist.name;
+        input.value = inputValue;
+        clear();
         getApi("q=" + datas[i].artist.name);
       });
-      artist_items.appendChild(artist_item);
+      artistItems.appendChild(artist);
     }
   }
-  return;
 }
 
 function createItem(image) {
   let item = document.createElement("div");
   item.style.backgroundImage = "url('" + image + "')";
-  item.style.backgroundRepeat = "no-repeat";
-  item.style.backgroundSize = "cover";
   item.classList.add("item");
   return item;
 }
 
-let list_artists = [];
-let input = document.querySelector("input");
-let button = document.querySelector("button");
-let audio = document.querySelector("audio");
-audio.volume = 0.25;
-let items = document.querySelector(".items");
-let track_items = document.createElement("div");
-track_items.classList.add("track_items");
-let artist_items = document.createElement("div");
-artist_items.classList.add("artist_items");
-let input_value;
-button.addEventListener("click", function () {
-  items.innerHTML = "Подождите...";
-  input_value = input.value;
-  track_items.innerHTML = "";
-  artist_items.innerHTML = "";
-  list_artists = [];
-  getApi("q=" + input_value);
-});
+window.addEventListener("resize", fixHeight);
+
+function fixHeight() {
+  let items = document.querySelectorAll(".item");
+  items.forEach((elem) => (elem.style.height = getComputedStyle(elem).width));
+}
