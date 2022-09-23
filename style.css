@@ -62,6 +62,13 @@ button[type="submit"] {
   max-width: 20%;
 }
 
+@media (max-width: 415px) {
+  .artistItems {
+    margin-top: 5px;
+    max-width: 100%;
+  }
+}
+
 .artistItems .item {
   flex-grow: 1;
   margin: 5px;
