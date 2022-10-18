@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>AllMusic</title>
+  </head>
+
+  <body style="background-color: rgba(126, 126, 126, 0.192)">
+    <div class="wrapper">
+      <div style="font-size: 20px">
+        <span
+          >Сервис позволяет быстро ознакомиться с самыми популярными треками
+          любого артиста с помощью API Deezer, достаточно ввести запрос и
+          навести курсор на обложку альбома.</span
+        >
+      </div>
+      <h2>ВВЕДИТЕ ЗАПРОС</h2>
+      <div style="margin-bottom: 15px">
+        <input
+          class="input"
+          type="text"
+          style="min-width: 30%"
+          placeholder="Oxxxymiron"
+        />
+        <button type="submit">ОТПРАВИТЬ</button>
+        <audio
+          class="audio"
+          style="display: none"
+          src=""
+          controls
+          autoplay
+          loop
+        ></audio>
+        <!-- <input type="range" min="1" max="100" value="30" class="slider" />
+        <span>Громкость</span> -->
+      </div>
+      <div class="result"></div>
+    </div>
+    <script src="./script.js"></script>
+  </body>
+</html>
